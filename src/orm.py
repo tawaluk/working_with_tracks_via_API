@@ -1,37 +1,50 @@
-import asyncio
+from datetime import datetime
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from models import CustomBase, Track, User
+from models import CustomBase, Track
 from config import settings
 
-track_engine = create_async_engine(
+track_engine = create_engine(
     url=settings.database_url_async_psycopg,
     echo=True,
 )
 
-track_session = async_sessionmaker(bind=track_engine)
+session = sessionmaker(
+    autoflush=False,
+    bind=track_engine,
+)
+
+def get_user_tracks(api_token: str):
+
+    connect_db = session()
+    tracks = connect_db.query(Track).filter(Track.api_token == api_token).all()
+
+    return tracks
 
 
-async def test_case_del_and_create():
-    """utility function for deleting and creating a table in the database."""
-    async with track_engine.begin() as connect:
-        await connect.run_sync(CustomBase.metadata.drop_all)
-        await connect.run_sync(CustomBase.metadata.create_all)
+def create_track(track):
+    connect_db = session()
+    connect_db.add(track)
+    connect_db.commit()
+    connect_db.refresh(track)
+    return track
 
 
-async def add_track(model_instance, session=track_session):
-    """create one record."""
-    async with session() as async_session:
-        async_session.add(model_instance)
-        await async_session.commit()
+def delete_all():
+    CustomBase.metadata.drop_all(bind=track_engine)
 
+def create_all():
+    CustomBase.metadata.create_all(bind=track_engine)
 
-if __name__ == "__main__":
-    async def test_case_del_and_create():
-        async with track_engine.begin() as connect:
-            #await connect.run_sync(CustomBase.metadata.drop_all)
-            await connect.run_sync(CustomBase.metadata.create_all)
-
-    asyncio.run(test_case_del_and_create())
+test_case = Track(
+        api_token="5b3ce3597851110001cf62488de5fbe05d8d40adb594a97fe7716bb8",
+        name="Test Track2",
+        description="This is a test track",
+        start_point="Start Point",
+        finish_point="Finish Point",
+        start_datetime=datetime.now(),
+        finish_datetime=datetime.now(),
+        travel_duration=2.5
+    )
