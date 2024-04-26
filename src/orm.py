@@ -46,16 +46,13 @@ def get_statistics(api_token: str, day_of_week: int):
             func.cast(Track.travel_duration, Float)
         ).label('total_travel_time'),
         func.avg(
-            (func.cast(
-                Track.travel_duration, Float
-            ) / func.cast(Track.travel_time, Float)).label('average_speed')
-        )
+            func.cast(Track.travel_duration, Float) /
+            func.cast(Track.travel_time, Float)
+        ).label('average_speed')
     ).filter(
-        func.extract('dow', Track.start_datetime) == day_of_week,
-        Track.api_token == api_token
-    ).group_by(
-        'day_of_week'
-    ).all()
+        Track.api_token == api_token,
+        func.extract('dow', Track.start_datetime) == day_of_week
+    ).group_by('day_of_week').all()
 
     result: list = []
     for stat in statistics:
@@ -68,6 +65,8 @@ def get_statistics(api_token: str, day_of_week: int):
 
     return result
 
+
+# for dev and tests
 
 def delete_all():
 

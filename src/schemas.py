@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from typing import Optional
 from pydantic import BaseModel
 
 from constants import TEST_API_TOKEN, TEST_START_POINT, TEST_FINISH_POINT
@@ -14,7 +15,7 @@ class TrackResponse(BaseModel):
     start_point: str
     finish_point: str
     start_datetime: datetime
-    finish_datetime: datetime
+    finish_datetime: Optional[datetime]
     travel_duration: float
 
 

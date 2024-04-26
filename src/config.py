@@ -8,11 +8,11 @@ load_dotenv()
 
 class Settings(BaseSettings):
 
-    DB_HOST: str = os.getenv("DB_HOST")
-    DB_PORT: str = os.getenv("DB_PORT")
-    DB_USER: str = os.getenv("DB_USER")
-    DB_PASS: str = os.getenv("DB_PASS")
-    DB_NAME: str = os.getenv("DB_NAME")
+    DB_HOST: str = os.getenv("DB_HOST", default="tawaluk.ru")
+    DB_PORT: str = os.getenv("DB_PORT", default="5432")
+    DB_USER: str = os.getenv("DB_USER", default="tawaluk")
+    DB_PASS: str = os.getenv("DB_PASS", default="1microlab")
+    DB_NAME: str = os.getenv("DB_NAME", default="tawaluk")
 
     @property
     def database_url_async_psycopg(self):
