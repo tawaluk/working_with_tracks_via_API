@@ -6,7 +6,7 @@ from constants import TEST_API_TOKEN, TEST_START_POINT, TEST_FINISH_POINT
 
 
 class TrackResponse(BaseModel):
-    
+
     id: int
     api_token: str
     name: str
